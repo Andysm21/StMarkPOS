@@ -6,7 +6,7 @@ import { ImageOff, Search, ArrowLeft, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatCurrency } from "@/lib/format";
-import { PRODUCT_CATEGORIES } from "@/lib/categories";
+import { PRODUCT_CATEGORIES, resolveCategory } from "@/lib/categories";
 import type { Product } from "@/lib/types";
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -37,7 +37,7 @@ export function CategoryProductPicker({
   const [category, setCategory] = useState<string | null>(null);
 
   const categoriesWithProducts = useMemo(() => {
-    const set = new Set(products.map((p) => p.category).filter(Boolean) as string[]);
+    const set = new Set(products.map((p) => resolveCategory(p.category)));
     return PRODUCT_CATEGORIES.filter((c) => set.has(c));
   }, [products]);
 
@@ -53,7 +53,7 @@ export function CategoryProductPicker({
       );
     }
     if (category) {
-      return products.filter((p) => p.category === category);
+      return products.filter((p) => resolveCategory(p.category) === category);
     }
     return [];
   }, [products, query, category, searching]);
