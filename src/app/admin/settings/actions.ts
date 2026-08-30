@@ -2,6 +2,7 @@
 
 import { getServiceClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { hasValidAdminSession, hasValidSuperAdminSession } from "@/lib/session";
 
 export type SettingsValues = {
   usage_threshold_bytes: number;
@@ -9,6 +10,9 @@ export type SettingsValues = {
 };
 
 export async function getSettings(): Promise<SettingsValues> {
+  if (!(await hasValidAdminSession())) {
+    return { usage_threshold_bytes: 2_000_000_000, low_stock_threshold: 5 };
+  }
   const supabase = getServiceClient();
   const { data } = await supabase.from("settings").select("*");
   const rows = (data as { key: string; value: string }[] | null) ?? [];
@@ -20,6 +24,9 @@ export async function getSettings(): Promise<SettingsValues> {
 }
 
 export async function updateSettings(values: SettingsValues) {
+  if (!(await hasValidSuperAdminSession())) {
+    throw new Error("unauthorized");
+  }
   const supabase = getServiceClient();
   const { error } = await supabase.from("settings").upsert([
     { key: "usage_threshold_bytes", value: String(values.usage_threshold_bytes) },

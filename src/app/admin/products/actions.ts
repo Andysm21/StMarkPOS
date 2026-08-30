@@ -3,6 +3,7 @@
 import { getServiceClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import type { Product } from "@/lib/types";
+import { hasValidAdminSession } from "@/lib/session";
 
 export type ProductInput = {
   name_ar: string;
@@ -14,7 +15,14 @@ export type ProductInput = {
   image_url: string | null;
 };
 
+async function requireAdmin() {
+  if (!(await hasValidAdminSession())) {
+    throw new Error("unauthorized");
+  }
+}
+
 export async function createProduct(input: ProductInput) {
+  await requireAdmin();
   const supabase = getServiceClient();
   const { error } = await supabase.from("products").insert(input);
   if (error) throw new Error(error.message);
@@ -22,6 +30,7 @@ export async function createProduct(input: ProductInput) {
 }
 
 export async function updateProduct(id: string, input: Partial<ProductInput>) {
+  await requireAdmin();
   const supabase = getServiceClient();
   const { error } = await supabase.from("products").update(input).eq("id", id);
   if (error) throw new Error(error.message);
@@ -29,6 +38,7 @@ export async function updateProduct(id: string, input: Partial<ProductInput>) {
 }
 
 export async function deleteProduct(id: string) {
+  await requireAdmin();
   const supabase = getServiceClient();
   const { error } = await supabase.from("products").delete().eq("id", id);
   if (error) throw new Error(error.message);
@@ -36,6 +46,7 @@ export async function deleteProduct(id: string) {
 }
 
 export async function listAllProducts(): Promise<Product[]> {
+  await requireAdmin();
   const supabase = getServiceClient();
   const { data, error } = await supabase
     .from("products")
@@ -46,6 +57,7 @@ export async function listAllProducts(): Promise<Product[]> {
 }
 
 export async function getLowStockProducts(): Promise<Product[]> {
+  if (!(await hasValidAdminSession())) return [];
   const supabase = getServiceClient();
   const [{ data: settingsRows }, { data: products, error }] = await Promise.all([
     supabase.from("settings").select("*").eq("key", "low_stock_threshold"),
