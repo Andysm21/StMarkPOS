@@ -116,6 +116,7 @@
   "backup": {
     "title": "النسخ الاحتياطي وإعادة الضبط",
     "usageWarning": "تنبيه: الاستخدام التقديري تجاوز الحد المسموح. هذا رقم تقريبي وليس رقم Supabase الحقيقي.",
+    "usageDisclaimer": "هذا رقم تقديري تقريبي وليس رقم Supabase الحقيقي.",
     "usedEstimate": "الاستخدام التقديري",
     "exportJson": "تصدير JSON",
     "exportCsv": "تصدير CSV",

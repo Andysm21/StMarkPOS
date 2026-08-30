@@ -116,6 +116,7 @@
   "backup": {
     "title": "Backup & Reset",
     "usageWarning": "Warning: estimated usage is over the threshold. This is an estimate, not the real Supabase number.",
+    "usageDisclaimer": "This is a rough estimate, not the real Supabase number.",
     "usedEstimate": "Estimated usage",
     "exportJson": "Export JSON",
     "exportCsv": "Export CSV",

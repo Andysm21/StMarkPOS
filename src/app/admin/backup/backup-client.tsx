@@ -75,7 +75,7 @@ export function BackupClient({ usage }: { usage: UsageStatus }) {
           <p className="text-2xl font-bold">
             {usedMb}MB <span className="text-sm font-normal text-muted-foreground">/ {thresholdMb}MB</span>
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">{t("usageWarning")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("usageDisclaimer")}</p>
         </CardContent>
       </Card>
 
