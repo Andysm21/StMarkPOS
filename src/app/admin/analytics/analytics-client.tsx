@@ -16,6 +16,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import { Wallet, PieChartIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/format";
 import type { AnalyticsData } from "./data";
@@ -36,19 +37,25 @@ export function AnalyticsClient({ data }: { data: AnalyticsData }) {
       <h1 className="text-xl font-bold">{t("title")}</h1>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Card>
-          <CardHeader>
+        <Card className="fade-in-up overflow-hidden border-s-4 border-s-primary border-primary/10">
+          <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">{t("openLiability")}</CardTitle>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Wallet className="h-4.5 w-4.5" />
+            </span>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-primary">
+            <p className="text-3xl font-extrabold text-primary">
               {formatCurrency(data.openLiability, locale)}
             </p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
+        <Card className="fade-in-up overflow-hidden border-s-4 border-s-gold border-primary/10">
+          <CardHeader className="flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground">{t("salesBreakdown")}</CardTitle>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/20 text-gold-foreground">
+              <PieChartIcon className="h-4.5 w-4.5" />
+            </span>
           </CardHeader>
           <CardContent className="h-40">
             <ResponsiveContainer width="100%" height="100%">

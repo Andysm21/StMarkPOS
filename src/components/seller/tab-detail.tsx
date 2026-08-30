@@ -1,15 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import Link from "next/link";
-import { ArrowLeft, Plus, Minus, Trash2, ImageOff } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Minus,
+  Trash2,
+  ImageOff,
+  Wallet,
+  TrendingUp,
+  TrendingDown,
+  CheckCircle2,
+  ShoppingBasket,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Dialog,
   DialogContent,
@@ -51,6 +64,17 @@ export function TabDetail({
   const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
   const balance = totalCharged - totalPaid;
   const closed = tab.status === "closed";
+
+  const [flash, setFlash] = useState(false);
+  const prevBalance = useRef(balance);
+  useEffect(() => {
+    if (prevBalance.current !== balance) {
+      setFlash(true);
+      prevBalance.current = balance;
+      const timer = setTimeout(() => setFlash(false), 700);
+      return () => clearTimeout(timer);
+    }
+  }, [balance]);
 
   function openPicker() {
     setSelectedProduct(null);
@@ -140,8 +164,8 @@ export function TabDetail({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <Link href="/" className={buttonVariants({ variant: "ghost", size: "icon" })}>
-          <ArrowLeft className="h-5 w-5" />
+        <Link href="/" className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "press")}>
+          <ArrowLeft className="h-5 w-5 rtl:rotate-180" />
         </Link>
         <div className="flex-1">
           <p className="text-lg font-bold" dir="rtl">
@@ -156,36 +180,52 @@ export function TabDetail({
         </div>
       </div>
 
-      <Card>
+      <Card className="fade-in-up overflow-hidden border-primary/10">
         <CardContent className="grid grid-cols-2 gap-3 py-4 text-center">
-          <div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+              <Wallet className="h-4 w-4" />
+            </span>
             <p className="text-xs text-muted-foreground">{t("total")}</p>
             <p className="font-bold">{formatCurrency(totalCharged, locale)}</p>
           </div>
-          <div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+              <CheckCircle2 className="h-4 w-4" />
+            </span>
             <p className="text-xs text-muted-foreground">{t("paid")}</p>
             <p className="font-bold">{formatCurrency(totalPaid, locale)}</p>
           </div>
         </CardContent>
-        <CardContent className="border-t pt-4 pb-4 text-center">
+        <CardContent
+          className={cn(
+            "flex flex-col items-center gap-1 border-t pt-4 pb-5 text-center transition-colors duration-300",
+            flash && "flash-highlight",
+            balance > 0 && "bg-destructive/5",
+            balance < 0 && "bg-success/5"
+          )}
+        >
           {balance > 0 ? (
             <>
+              <TrendingUp className="h-5 w-5 text-destructive" />
               <p className="text-xs font-medium text-destructive">{t("owedFromCustomer")}</p>
-              <p className="text-2xl font-bold text-destructive">
+              <p className="text-3xl font-extrabold tracking-tight text-destructive">
                 {formatCurrency(balance, locale)}
               </p>
             </>
           ) : balance < 0 ? (
             <>
-              <p className="text-xs font-medium text-emerald-600">{t("changeDueToCustomer")}</p>
-              <p className="text-2xl font-bold text-emerald-600">
+              <TrendingDown className="h-5 w-5 text-success" />
+              <p className="text-xs font-medium text-success">{t("changeDueToCustomer")}</p>
+              <p className="text-3xl font-extrabold tracking-tight text-success">
                 {formatCurrency(Math.abs(balance), locale)}
               </p>
             </>
           ) : (
             <>
+              <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
               <p className="text-xs font-medium text-muted-foreground">{t("settledInFull")}</p>
-              <p className="text-2xl font-bold text-muted-foreground">
+              <p className="text-3xl font-extrabold tracking-tight text-muted-foreground">
                 {formatCurrency(0, locale)}
               </p>
             </>
@@ -200,11 +240,12 @@ export function TabDetail({
             {t("addItem")}
           </Button>
           <Button
-            variant="outline"
+            variant="success"
             className="h-11 flex-1"
             onClick={() => setPaymentOpen(true)}
             disabled={busy}
           >
+            <Wallet className="h-4 w-4" />
             {t("addPayment")}
           </Button>
         </div>
@@ -213,11 +254,15 @@ export function TabDetail({
       <div>
         <h2 className="mb-2 text-sm font-semibold text-muted-foreground">{t("items")}</h2>
         {items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("noItems")}</p>
+          <EmptyState icon={ShoppingBasket} title={t("noItems")} className="py-8" />
         ) : (
           <div className="flex flex-col gap-2">
-            {items.map((item) => (
-              <Card key={item.id}>
+            {items.map((item, i) => (
+              <Card
+                key={item.id}
+                className="stagger-item border-primary/10"
+                style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
+              >
                 <CardContent className="flex items-center justify-between py-3">
                   <div>
                     <p dir="rtl" className="font-medium">
@@ -228,13 +273,14 @@ export function TabDetail({
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">
+                    <span className="font-semibold text-primary">
                       {formatCurrency(item.price_snapshot * item.qty, locale)}
                     </span>
                     {!closed && (
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="press"
                         onClick={() => handleRemoveItem(item)}
                         disabled={busy}
                       >
@@ -274,7 +320,13 @@ export function TabDetail({
               <span className="text-muted-foreground">{t("closeSummaryPaid")}</span>
               <span className="font-medium">{formatCurrency(totalPaid, locale)}</span>
             </div>
-            <div className="flex items-center justify-between rounded-lg border p-3">
+            <div
+              className={cn(
+                "flex items-center justify-between rounded-xl border p-3",
+                balance > 0 && "border-destructive/20 bg-destructive/5",
+                balance < 0 && "border-success/20 bg-success/5"
+              )}
+            >
               {balance > 0 ? (
                 <>
                   <span className="text-sm font-medium text-destructive">
@@ -286,10 +338,10 @@ export function TabDetail({
                 </>
               ) : balance < 0 ? (
                 <>
-                  <span className="text-sm font-medium text-emerald-600">
+                  <span className="text-sm font-medium text-success">
                     {t("changeDueToCustomer")}
                   </span>
-                  <span className="text-lg font-bold text-emerald-600">
+                  <span className="text-lg font-bold text-success">
                     {formatCurrency(Math.abs(balance), locale)}
                   </span>
                 </>
@@ -396,14 +448,15 @@ export function TabDetail({
                 <DialogTitle>{t("pickProduct")}</DialogTitle>
               </DialogHeader>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {products.map((p) => (
+                {products.map((p, i) => (
                   <button
                     key={p.id}
                     disabled={busy}
                     onClick={() => pickProduct(p)}
-                    className="flex flex-col items-center gap-1.5 overflow-hidden rounded-xl border text-center transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
+                    style={{ animationDelay: `${Math.min(i, 12) * 25}ms` }}
+                    className="lift stagger-item flex flex-col items-center gap-1.5 overflow-hidden rounded-xl border border-primary/10 bg-card text-center disabled:opacity-50"
                   >
-                    <div className="flex h-20 w-full items-center justify-center bg-secondary">
+                    <div className="flex h-20 w-full items-center justify-center bg-gradient-to-br from-secondary to-muted">
                       {p.image_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -419,7 +472,7 @@ export function TabDetail({
                       <span dir="rtl" className="text-sm font-medium">
                         {p.name_ar}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs font-semibold text-primary">
                         {formatCurrency(p.price, locale)}
                       </span>
                     </div>

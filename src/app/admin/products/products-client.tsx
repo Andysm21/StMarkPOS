@@ -10,7 +10,8 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
-import { Plus, Pencil, Trash2, ImageOff } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Plus, Pencil, Trash2, ImageOff, PackageSearch } from "lucide-react";
 import { formatCurrency } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { createProduct, deleteProduct, updateProduct, type ProductInput } from "./actions";
@@ -65,23 +66,23 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">{t("title")}</h1>
-        <Button onClick={openCreate}>
+        <Button onClick={openCreate} className="glow-primary">
           <Plus className="h-4 w-4" />
           {t("addProduct")}
         </Button>
       </div>
 
       {products.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-muted-foreground">
-            {t("noProducts")}
-          </CardContent>
-        </Card>
+        <EmptyState icon={PackageSearch} title={t("noProducts")} />
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <Card key={p.id} className="overflow-hidden">
-              <div className="flex h-32 items-center justify-center bg-muted">
+          {products.map((p, i) => (
+            <Card
+              key={p.id}
+              className="lift stagger-item overflow-hidden border-primary/10"
+              style={{ animationDelay: `${Math.min(i, 12) * 30}ms` }}
+            >
+              <div className="flex h-32 items-center justify-center bg-gradient-to-br from-muted to-secondary">
                 {p.image_url ? (
                   <Image
                     src={p.image_url}
@@ -104,12 +105,12 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
                       <p className="text-sm text-muted-foreground">{p.name_en}</p>
                     )}
                   </div>
-                  <Badge variant={p.active ? "default" : "secondary"}>
+                  <Badge variant={p.active ? "success" : "secondary"}>
                     {p.active ? tc("active") : tc("inactive")}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium">{formatCurrency(p.price, locale)}</span>
+                  <span className="font-semibold text-primary">{formatCurrency(p.price, locale)}</span>
                   <span className="text-muted-foreground">
                     {t("quantity")}: {p.quantity_on_hand}
                   </span>
@@ -121,8 +122,7 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
                   </Button>
                   <Button
                     size="sm"
-                    variant="outline"
-                    className="text-destructive"
+                    variant="destructive"
                     onClick={() => handleDelete(p)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />

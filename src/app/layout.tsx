@@ -34,7 +34,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-background">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
-          <Toaster richColors position="top-center" />
+          <Toaster
+            richColors
+            position="top-center"
+            toastOptions={{
+              classNames: {
+                toast: "rounded-2xl! shadow-lg! border! font-medium!",
+              },
+            }}
+          />
         </NextIntlClientProvider>
       </body>
     </html>

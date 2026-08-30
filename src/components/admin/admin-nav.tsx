@@ -36,9 +36,9 @@ export function AdminNav() {
             key={l.href}
             href={l.href}
             className={cn(
-              "flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
+              "press flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-all duration-200",
               active
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
                 : "text-muted-foreground hover:bg-secondary hover:text-foreground"
             )}
           >

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Dialog,
   DialogContent,
@@ -80,24 +81,29 @@ export function SellerHome({ initialTabs }: { initialTabs: Tab[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-2 py-12 text-center text-muted-foreground">
-            <Receipt className="h-8 w-8" />
-            <p>{t("noTabs")}</p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Receipt}
+          title={t("noTabs")}
+          description={t("newTab")}
+        />
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((tab) => {
+          {filtered.map((tab, i) => {
             const balance = tab.total_charged - tab.total_paid;
             return (
-              <Link key={tab.id} href={`/tabs/${tab.id}`}>
-                <Card className="h-full transition-shadow hover:shadow-md active:scale-[0.99]">
+              <Link key={tab.id} href={`/tabs/${tab.id}`} className="block">
+                <Card
+                  className="lift stagger-item h-full border-primary/10"
+                  style={{ animationDelay: `${Math.min(i, 10) * 40}ms` }}
+                >
                   <CardContent className="flex flex-col gap-2 py-4">
                     <div className="flex items-center justify-between">
                       <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold">
                         {t("tabNumber")} {tab.tab_number}
                       </span>
+                      {balance > 0 && (
+                        <span className="h-2 w-2 rounded-full bg-destructive" />
+                      )}
                     </div>
                     <p className="truncate text-lg font-semibold" dir="rtl">
                       {tab.customer_name_ar}
@@ -106,7 +112,7 @@ export function SellerHome({ initialTabs }: { initialTabs: Tab[] }) {
                       <span className="text-muted-foreground">{t("balance")}</span>
                       <span
                         className={
-                          balance > 0 ? "font-bold text-primary" : "font-bold text-muted-foreground"
+                          balance > 0 ? "font-bold text-destructive" : "font-bold text-success"
                         }
                       >
                         {formatCurrency(balance, locale)}
