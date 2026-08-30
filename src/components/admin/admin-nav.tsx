@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Package, BarChart3, Settings, DatabaseBackup, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -13,10 +14,10 @@ export function AdminNav() {
   const router = useRouter();
 
   const links = [
-    { href: "/admin/products", label: t("products") },
-    { href: "/admin/analytics", label: t("analytics") },
-    { href: "/admin/settings", label: t("settings") },
-    { href: "/admin/backup", label: t("backup") },
+    { href: "/admin/products", label: t("products"), icon: Package },
+    { href: "/admin/analytics", label: t("analytics"), icon: BarChart3 },
+    { href: "/admin/settings", label: t("settings"), icon: Settings },
+    { href: "/admin/backup", label: t("backup"), icon: DatabaseBackup },
   ];
 
   async function logout() {
@@ -26,23 +27,29 @@ export function AdminNav() {
   }
 
   return (
-    <nav className="mx-auto flex max-w-5xl items-center gap-1 overflow-x-auto px-4 py-2">
-      {links.map((l) => (
-        <Link
-          key={l.href}
-          href={l.href}
-          className={cn(
-            "shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-            pathname?.startsWith(l.href)
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:bg-secondary"
-          )}
-        >
-          {l.label}
-        </Link>
-      ))}
+    <nav className="mx-auto flex max-w-5xl items-center gap-1.5 overflow-x-auto px-4 py-2.5">
+      {links.map((l) => {
+        const Icon = l.icon;
+        const active = pathname?.startsWith(l.href);
+        return (
+          <Link
+            key={l.href}
+            href={l.href}
+            className={cn(
+              "flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
+              active
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+            )}
+          >
+            <Icon className="h-4 w-4" />
+            {l.label}
+          </Link>
+        );
+      })}
       <div className="grow" />
-      <Button variant="ghost" size="sm" onClick={logout}>
+      <Button variant="ghost" size="sm" onClick={logout} className="shrink-0 gap-1.5">
+        <LogOut className="h-4 w-4" />
         {tc("logout")}
       </Button>
     </nav>

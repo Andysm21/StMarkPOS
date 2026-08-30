@@ -45,6 +45,7 @@ export function TabDetail({
   const [busy, setBusy] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [pickQty, setPickQty] = useState(1);
+  const [closeConfirmOpen, setCloseConfirmOpen] = useState(false);
 
   const totalCharged = items.reduce((s, i) => s + i.price_snapshot * i.qty, 0);
   const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
@@ -122,12 +123,6 @@ export function TabDetail({
   }
 
   async function handleClose() {
-    if (balance !== 0) {
-      const msg = t("confirmCloseWithBalance", { amount: formatCurrency(balance, locale) });
-      if (!confirm(msg)) return;
-    } else if (!confirm(t("confirmCloseTitle"))) {
-      return;
-    }
     setBusy(true);
     try {
       await closeTab(tab.id);
@@ -138,6 +133,7 @@ export function TabDetail({
       toast.error(tc("error"));
     } finally {
       setBusy(false);
+      setCloseConfirmOpen(false);
     }
   }
 
@@ -161,7 +157,7 @@ export function TabDetail({
       </div>
 
       <Card>
-        <CardContent className="grid grid-cols-3 gap-2 py-4 text-center">
+        <CardContent className="grid grid-cols-2 gap-3 py-4 text-center">
           <div>
             <p className="text-xs text-muted-foreground">{t("total")}</p>
             <p className="font-bold">{formatCurrency(totalCharged, locale)}</p>
@@ -170,10 +166,30 @@ export function TabDetail({
             <p className="text-xs text-muted-foreground">{t("paid")}</p>
             <p className="font-bold">{formatCurrency(totalPaid, locale)}</p>
           </div>
-          <div>
-            <p className="text-xs text-muted-foreground">{t("balance")}</p>
-            <p className="font-bold text-primary">{formatCurrency(balance, locale)}</p>
-          </div>
+        </CardContent>
+        <CardContent className="border-t pt-4 pb-4 text-center">
+          {balance > 0 ? (
+            <>
+              <p className="text-xs font-medium text-destructive">{t("owedFromCustomer")}</p>
+              <p className="text-2xl font-bold text-destructive">
+                {formatCurrency(balance, locale)}
+              </p>
+            </>
+          ) : balance < 0 ? (
+            <>
+              <p className="text-xs font-medium text-emerald-600">{t("changeDueToCustomer")}</p>
+              <p className="text-2xl font-bold text-emerald-600">
+                {formatCurrency(Math.abs(balance), locale)}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs font-medium text-muted-foreground">{t("settledInFull")}</p>
+              <p className="text-2xl font-bold text-muted-foreground">
+                {formatCurrency(0, locale)}
+              </p>
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -234,10 +250,72 @@ export function TabDetail({
       </div>
 
       {!closed && (
-        <Button variant="destructive" size="lg" onClick={handleClose} disabled={busy}>
+        <Button
+          variant="destructive"
+          size="lg"
+          onClick={() => setCloseConfirmOpen(true)}
+          disabled={busy}
+        >
           {t("closeTab")}
         </Button>
       )}
+
+      <Dialog open={closeConfirmOpen} onOpenChange={setCloseConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("confirmCloseTitle")}</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">{t("closeSummaryTotal")}</span>
+              <span className="font-medium">{formatCurrency(totalCharged, locale)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">{t("closeSummaryPaid")}</span>
+              <span className="font-medium">{formatCurrency(totalPaid, locale)}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              {balance > 0 ? (
+                <>
+                  <span className="text-sm font-medium text-destructive">
+                    {t("owedFromCustomer")}
+                  </span>
+                  <span className="text-lg font-bold text-destructive">
+                    {formatCurrency(balance, locale)}
+                  </span>
+                </>
+              ) : balance < 0 ? (
+                <>
+                  <span className="text-sm font-medium text-emerald-600">
+                    {t("changeDueToCustomer")}
+                  </span>
+                  <span className="text-lg font-bold text-emerald-600">
+                    {formatCurrency(Math.abs(balance), locale)}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {t("settledInFull")}
+                  </span>
+                  <span className="text-lg font-bold text-muted-foreground">
+                    {formatCurrency(0, locale)}
+                  </span>
+                </>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground">{t("closeConfirmQuestion")}</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCloseConfirmOpen(false)} disabled={busy}>
+              {tc("cancel")}
+            </Button>
+            <Button variant="destructive" onClick={handleClose} disabled={busy}>
+              {t("confirmCloseAction")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog
         open={pickerOpen}
