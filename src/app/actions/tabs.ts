@@ -2,6 +2,7 @@
 
 import { getServiceClient } from "@/lib/supabase/server";
 import { trackUsageBytes, estimateJsonBytes } from "@/lib/usage";
+import { hasValidAdminSession } from "@/lib/session";
 import { revalidatePath } from "next/cache";
 import type { Tab, TabItem, Payment, Product } from "@/lib/types";
 
@@ -95,6 +96,50 @@ export async function closeTab(tabId: string) {
     .eq("id", tabId);
   if (error) throw new Error(error.message);
   revalidatePath("/");
+}
+
+export async function countOpenTabs(): Promise<number> {
+  const supabase = getServiceClient();
+  const { count, error } = await supabase
+    .from("tabs")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "open");
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
+
+export async function resetTabNumbering() {
+  if (!(await hasValidAdminSession())) {
+    throw new Error("unauthorized");
+  }
+  const supabase = getServiceClient();
+  const { count: openCount, error: countError } = await supabase
+    .from("tabs")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "open");
+  if (countError) throw new Error(countError.message);
+  if ((openCount ?? 0) > 0) {
+    throw new Error("Cannot reset tab numbering while tabs are open");
+  }
+
+  const { data: closedTabs, error: listError } = await supabase
+    .from("tabs")
+    .select("id")
+    .eq("status", "closed");
+  if (listError) throw new Error(listError.message);
+  const ids = (closedTabs as { id: string }[] | null)?.map((t) => t.id) ?? [];
+
+  if (ids.length > 0) {
+    const { error: itemsErr } = await supabase.from("tab_items").delete().in("tab_id", ids);
+    if (itemsErr) throw new Error(itemsErr.message);
+    const { error: paymentsErr } = await supabase.from("payments").delete().in("tab_id", ids);
+    if (paymentsErr) throw new Error(paymentsErr.message);
+    const { error: tabsErr } = await supabase.from("tabs").delete().in("id", ids);
+    if (tabsErr) throw new Error(tabsErr.message);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/admin/settings");
 }
 
 export async function listActiveProducts(): Promise<Product[]> {

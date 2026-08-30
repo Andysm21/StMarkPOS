@@ -44,3 +44,17 @@ export async function listAllProducts(): Promise<Product[]> {
   if (error) throw new Error(error.message);
   return (data as Product[]) ?? [];
 }
+
+export async function getLowStockProducts(): Promise<Product[]> {
+  const supabase = getServiceClient();
+  const [{ data: settingsRows }, { data: products, error }] = await Promise.all([
+    supabase.from("settings").select("*").eq("key", "low_stock_threshold"),
+    supabase.from("products").select("*").eq("active", true),
+  ]);
+  if (error) throw new Error(error.message);
+  const thresholdRow = (settingsRows as { key: string; value: string }[] | null)?.[0];
+  const threshold = thresholdRow ? Number(thresholdRow.value) : 5;
+  return ((products as Product[] | null) ?? []).filter(
+    (p) => p.quantity_on_hand <= threshold
+  );
+}

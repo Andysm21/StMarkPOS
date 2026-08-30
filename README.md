@@ -42,7 +42,7 @@ this for you, skip to "Changing the password or PIN" below.
 1. Go to [vercel.com](https://vercel.com), create a free account, and
    import this project (if it's in GitHub) or upload the folder.
 2. Before the first deploy, open **Settings → Environment Variables** and
-   add these four:
+   add these:
 
    | Name | Value |
    |---|---|
@@ -50,6 +50,7 @@ this for you, skip to "Changing the password or PIN" below.
    | `SUPABASE_SERVICE_ROLE_KEY` | the service_role key from Step 1 |
    | `ADMIN_PASSWORD` | a password you choose for the Admin area |
    | `SELLER_PIN` | a 4-digit number for the till, e.g. `1234` |
+   | `SUPER_ADMIN_PASSWORD` | a second, stronger password — only needed to open the Settings page (usage/low-stock thresholds and the tab-number reset). Choose a different password than `ADMIN_PASSWORD` and keep it to yourself/the owner; regular staff with the admin password can still use Products, Analytics and Backup without it. |
 
 3. Click **Deploy**. After a minute or two you'll get a website address
    like `https://your-app.vercel.app` — that's your canteen's till.
@@ -155,7 +156,10 @@ your menu.
   signed, httpOnly cookie (`src/lib/session.ts`, `middleware.ts`). Seller
   access is a 4-digit PIN (`SELLER_PIN`) checked once per browser session
   and cached in `sessionStorage` — this is a light gate, not a real
-  authorization boundary, by design.
+  authorization boundary, by design. A second password, `SUPER_ADMIN_PASSWORD`,
+  gates only the `/admin/settings` page (usage threshold, low-stock
+  threshold, tab-number reset) behind its own signed cookie — a regular
+  admin doesn't need it for Products/Analytics/Backup.
 - i18n: `next-intl`, Arabic (`ar`, RTL) is the default locale, English
   (`en`, LTR) is a toggle. Locale is stored in a cookie, not the URL.
 - Product images are resized/compressed to WebP in the browser (canvas,

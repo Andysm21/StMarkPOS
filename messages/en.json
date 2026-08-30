@@ -84,7 +84,15 @@
     "emptyCart": "Cart is empty",
     "success": "Sale completed",
     "newSale": "New Sale",
-    "receipt": "Receipt"
+    "receipt": "Receipt",
+    "viewCart": "View cart",
+    "items": "items"
+  },
+  "picker": {
+    "searchPlaceholder": "Search products...",
+    "noResults": "No products found",
+    "backToCategories": "Back to categories",
+    "noProductsInCategory": "No products in this category"
   },
   "products": {
     "title": "Products",
@@ -95,13 +103,31 @@
     "price": "Price",
     "quantity": "Quantity on hand",
     "category": "Category",
+    "categoryPlaceholder": "Choose a category",
     "image": "Image",
     "uploadImage": "Upload image",
+    "uploadHint": "Click to upload image",
+    "uploadHintDrag": "or drag and drop",
+    "replaceImage": "Replace image",
+    "removeImage": "Remove image",
     "active": "Active",
+    "activeHint": "Visible to sellers and shown in the till",
     "saved": "Saved",
     "deleted": "Deleted",
     "confirmDelete": "Delete this product?",
+    "confirmDeleteTitle": "Delete product",
     "noProducts": "No products yet"
+  },
+  "categories": {
+    "chips": "Chips",
+    "chocolate": "Chocolate",
+    "cold_drinks": "Cold Drinks",
+    "hot_drinks": "Hot Drinks",
+    "molto": "Molto",
+    "snacks": "Snacks",
+    "biscuits": "Biscuits",
+    "other": "Other",
+    "all": "All"
   },
   "analytics": {
     "title": "Analytics",
@@ -119,7 +145,27 @@
     "title": "Settings",
     "usageThreshold": "Usage warning threshold (bytes)",
     "lowStockThreshold": "Low stock threshold",
-    "saved": "Settings saved"
+    "saved": "Settings saved",
+    "tabNumbering": "Tab Numbering",
+    "tabResetHint": "Reset the next tab number back to 1. Only available when there are no open tabs.",
+    "tabResetBlocked": "Close or wait for all open tabs to finish before resetting tab numbers.",
+    "tabResetButton": "Reset Tab Numbers",
+    "tabResetWarning": "This permanently deletes all closed tabs and their items/payments so numbering can restart at 1. This cannot be undone.",
+    "tabResetTypeConfirm": "Type RESET to confirm",
+    "tabResetDone": "Tab numbering reset to 1"
+  },
+  "superAdmin": {
+    "gateTitle": "Super Admin Access Required",
+    "gateDescription": "This section shows sensitive usage and threshold settings. Enter the super admin password to continue.",
+    "password": "Super admin password",
+    "unlock": "Unlock",
+    "wrongPassword": "Wrong super admin password"
+  },
+  "lowStock": {
+    "title": "Low Stock Alert",
+    "message": "{count} product(s) are at or below the low stock threshold.",
+    "dismiss": "Dismiss",
+    "viewProducts": "View Products"
   },
   "backup": {
     "title": "Backup & Reset",

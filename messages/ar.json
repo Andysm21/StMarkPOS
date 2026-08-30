@@ -84,7 +84,15 @@
     "emptyCart": "السلة فارغة",
     "success": "تم البيع بنجاح",
     "newSale": "بيع جديد",
-    "receipt": "إيصال"
+    "receipt": "إيصال",
+    "viewCart": "عرض السلة",
+    "items": "أصناف"
+  },
+  "picker": {
+    "searchPlaceholder": "ابحث عن منتج...",
+    "noResults": "لا توجد منتجات مطابقة",
+    "backToCategories": "رجوع للفئات",
+    "noProductsInCategory": "لا توجد منتجات في هذه الفئة"
   },
   "products": {
     "title": "المنتجات",
@@ -95,13 +103,31 @@
     "price": "السعر",
     "quantity": "الكمية المتاحة",
     "category": "الفئة",
+    "categoryPlaceholder": "اختر الفئة",
     "image": "الصورة",
     "uploadImage": "رفع صورة",
+    "uploadHint": "اضغط لرفع صورة",
+    "uploadHintDrag": "أو اسحب الصورة هنا",
+    "replaceImage": "تغيير الصورة",
+    "removeImage": "إزالة الصورة",
     "active": "نشط",
+    "activeHint": "يظهر للكاشير ويكون متاح في شاشة البيع",
     "saved": "تم الحفظ",
     "deleted": "تم الحذف",
     "confirmDelete": "هل تريد حذف هذا المنتج؟",
+    "confirmDeleteTitle": "حذف المنتج",
     "noProducts": "لا توجد منتجات بعد"
+  },
+  "categories": {
+    "chips": "شيبسي",
+    "chocolate": "شوكولاتة",
+    "cold_drinks": "مشروبات باردة",
+    "hot_drinks": "مشروبات ساخنة",
+    "molto": "مولتو",
+    "snacks": "سناكس",
+    "biscuits": "بسكويت",
+    "other": "أخرى",
+    "all": "الكل"
   },
   "analytics": {
     "title": "التقارير",
@@ -119,7 +145,27 @@
     "title": "الإعدادات",
     "usageThreshold": "حد استخدام البيانات (بايت)",
     "lowStockThreshold": "حد المخزون المنخفض",
-    "saved": "تم حفظ الإعدادات"
+    "saved": "تم حفظ الإعدادات",
+    "tabNumbering": "ترقيم الحسابات",
+    "tabResetHint": "إعادة رقم الحساب التالي إلى 1. متاح فقط عند عدم وجود حسابات مفتوحة.",
+    "tabResetBlocked": "أغلق جميع الحسابات المفتوحة أولاً قبل إعادة ضبط الترقيم.",
+    "tabResetButton": "إعادة ضبط ترقيم الحسابات",
+    "tabResetWarning": "سيتم حذف كل الحسابات المغلقة وأصنافها ودفعاتها نهائياً حتى يبدأ الترقيم من 1 مجدداً. لا يمكن التراجع عن هذا الإجراء.",
+    "tabResetTypeConfirm": "اكتب RESET للتأكيد",
+    "tabResetDone": "تمت إعادة ضبط ترقيم الحسابات إلى 1"
+  },
+  "superAdmin": {
+    "gateTitle": "مطلوب صلاحية المدير الأعلى",
+    "gateDescription": "يعرض هذا القسم بيانات الاستخدام والحدود الحساسة. أدخل كلمة مرور المدير الأعلى للمتابعة.",
+    "password": "كلمة مرور المدير الأعلى",
+    "unlock": "دخول",
+    "wrongPassword": "كلمة مرور المدير الأعلى غير صحيحة"
+  },
+  "lowStock": {
+    "title": "تنبيه مخزون منخفض",
+    "message": "يوجد {count} منتج (منتجات) وصلت إلى حد المخزون المنخفض أو أقل.",
+    "dismiss": "إغلاق",
+    "viewProducts": "عرض المنتجات"
   },
   "backup": {
     "title": "النسخ الاحتياطي وإعادة الضبط",

@@ -6,8 +6,10 @@ import { useTranslations } from "next-intl";
 import { Package, BarChart3, Settings, DatabaseBackup, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { LowStockBell } from "@/components/admin/low-stock-bell";
+import type { Product } from "@/lib/types";
 
-export function AdminNav() {
+export function AdminNav({ lowStockProducts = [] }: { lowStockProducts?: Product[] }) {
   const t = useTranslations("admin.nav");
   const tc = useTranslations("common");
   const pathname = usePathname();
@@ -48,6 +50,7 @@ export function AdminNav() {
         );
       })}
       <div className="grow" />
+      <LowStockBell products={lowStockProducts} />
       <Button variant="ghost" size="sm" onClick={logout} className="shrink-0 gap-1.5">
         <LogOut className="h-4 w-4" />
         {tc("logout")}

@@ -33,6 +33,7 @@ import {
 import { formatCurrency } from "@/lib/format";
 import type { Tab, TabItem, Payment, Product } from "@/lib/types";
 import { addPayment, addTabItem, closeTab, removeTabItem } from "@/app/actions/tabs";
+import { CategoryProductPicker } from "@/components/seller/category-product-picker";
 
 export function TabDetail({
   tab,
@@ -447,38 +448,7 @@ export function TabDetail({
               <DialogHeader>
                 <DialogTitle>{t("pickProduct")}</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {products.map((p, i) => (
-                  <button
-                    key={p.id}
-                    disabled={busy}
-                    onClick={() => pickProduct(p)}
-                    style={{ animationDelay: `${Math.min(i, 12) * 25}ms` }}
-                    className="lift stagger-item flex flex-col items-center gap-1.5 overflow-hidden rounded-xl border border-primary/10 bg-card text-center disabled:opacity-50"
-                  >
-                    <div className="flex h-20 w-full items-center justify-center bg-gradient-to-br from-secondary to-muted">
-                      {p.image_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={p.image_url}
-                          alt={p.name_ar}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <ImageOff className="h-6 w-6 text-muted-foreground" />
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-0.5 px-2 pb-2">
-                      <span dir="rtl" className="text-sm font-medium">
-                        {p.name_ar}
-                      </span>
-                      <span className="text-xs font-semibold text-primary">
-                        {formatCurrency(p.price, locale)}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <CategoryProductPicker products={products} onSelect={pickProduct} disabled={busy} />
             </>
           )}
         </DialogContent>

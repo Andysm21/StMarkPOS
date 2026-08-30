@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -15,7 +15,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { UploadCloud, X, ImagePlus } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { resizeImageToWebp } from "@/lib/image-resize";
+import { PRODUCT_CATEGORIES } from "@/lib/categories";
 import type { Product } from "@/lib/types";
 import type { ProductInput } from "./actions";
 
@@ -31,6 +41,7 @@ export function ProductForm({
   onSubmit: (input: ProductInput) => Promise<void>;
 }) {
   const t = useTranslations("products");
+  const tCat = useTranslations("categories");
   const tc = useTranslations("common");
   const [nameAr, setNameAr] = useState(product?.name_ar ?? "");
   const [nameEn, setNameEn] = useState(product?.name_en ?? "");
@@ -41,8 +52,14 @@ export function ProductForm({
   const [imageUrl, setImageUrl] = useState<string | null>(product?.image_url ?? null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast.error(tc("error"));
+      return;
+    }
     setUploading(true);
     try {
       const webp = await resizeImageToWebp(file);
@@ -120,34 +137,108 @@ export function ProductForm({
           </div>
           <div className="flex flex-col gap-2">
             <Label>{t("category")}</Label>
-            <Input value={category} onChange={(e) => setCategory(e.target.value)} />
+            <Select value={category || undefined} onValueChange={(v) => setCategory(String(v))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t("categoryPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                {PRODUCT_CATEGORIES.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    {tCat(c)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex flex-col gap-2">
             <Label>{t("image")}</Label>
-            <div className="flex items-center gap-3">
-              {imageUrl && (
-                <Image
-                  src={imageUrl}
-                  alt=""
-                  width={56}
-                  height={56}
-                  className="h-14 w-14 rounded-lg object-cover"
-                />
-              )}
-              <Input
-                type="file"
-                accept="image/*"
-                disabled={uploading}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFile(file);
+              }}
+            />
+            {imageUrl ? (
+              <div className="flex items-center gap-3 rounded-xl border border-primary/10 bg-secondary/30 p-3">
+                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
+                  <Image
+                    src={imageUrl}
+                    alt=""
+                    width={64}
+                    height={64}
+                    className="h-16 w-16 object-cover"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-1.5">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="w-fit"
+                    disabled={uploading}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <ImagePlus className="h-3.5 w-3.5" />
+                    {t("replaceImage")}
+                  </Button>
+                </div>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="shrink-0 text-destructive"
+                  onClick={() => setImageUrl(null)}
+                  disabled={uploading}
+                  aria-label={t("removeImage")}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDragOver(false);
+                  const file = e.dataTransfer.files?.[0];
                   if (file) handleFile(file);
                 }}
-              />
-            </div>
-            {uploading && <p className="text-xs text-muted-foreground">{tc("loading")}</p>}
+                disabled={uploading}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 text-center transition-colors",
+                  dragOver
+                    ? "border-primary bg-primary/5"
+                    : "border-primary/25 bg-secondary/20 hover:border-primary/40 hover:bg-secondary/30",
+                  uploading && "opacity-60"
+                )}
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <UploadCloud className="h-5 w-5" />
+                </span>
+                <span className="text-sm font-medium">
+                  {uploading ? tc("loading") : t("uploadHint")}
+                </span>
+                {!uploading && (
+                  <span className="text-xs text-muted-foreground">{t("uploadHintDrag")}</span>
+                )}
+              </button>
+            )}
           </div>
-          <div className="flex items-center justify-between">
-            <Label>{t("active")}</Label>
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/10 bg-secondary/20 p-3">
+            <div className="flex flex-col gap-0.5">
+              <Label>{t("active")}</Label>
+              <span className="text-xs text-muted-foreground">{t("activeHint")}</span>
+            </div>
             <Switch checked={active} onCheckedChange={setActive} />
           </div>
           <DialogFooter>

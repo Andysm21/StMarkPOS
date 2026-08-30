@@ -11,6 +11,13 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2, ImageOff, PackageSearch } from "lucide-react";
 import { formatCurrency } from "@/lib/format";
 import type { Product } from "@/lib/types";
@@ -24,6 +31,8 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
   const [products, setProducts] = useState(initialProducts);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   function openCreate() {
     setEditing(null);
@@ -55,11 +64,19 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
     toast.success(t("saved"));
   }
 
-  async function handleDelete(p: Product) {
-    if (!confirm(t("confirmDelete"))) return;
-    await deleteProduct(p.id);
-    setProducts((prev) => prev.filter((x) => x.id !== p.id));
-    toast.success(t("deleted"));
+  async function handleDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await deleteProduct(deleteTarget.id);
+      setProducts((prev) => prev.filter((x) => x.id !== deleteTarget.id));
+      toast.success(t("deleted"));
+      setDeleteTarget(null);
+    } catch {
+      toast.error(tc("error"));
+    } finally {
+      setDeleting(false);
+    }
   }
 
   return (
@@ -123,7 +140,7 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => handleDelete(p)}
+                    onClick={() => setDeleteTarget(p)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -140,6 +157,28 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
         product={editing}
         onSubmit={handleSubmit}
       />
+
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("confirmDeleteTitle")}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">{t("confirmDelete")}</p>
+          {deleteTarget && (
+            <p dir="rtl" className="font-semibold">
+              {deleteTarget.name_ar}
+            </p>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleting}>
+              {tc("cancel")}
+            </Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+              {tc("delete")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
