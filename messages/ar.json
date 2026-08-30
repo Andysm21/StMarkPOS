@@ -1,0 +1,141 @@
+{
+  "app": {
+    "title": "كافيتريا سانت مارك - برج العرب"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ ما",
+    "retry": "إعادة المحاولة",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "search": "بحث",
+    "back": "رجوع",
+    "egp": "ج.م",
+    "empty": "لا توجد بيانات بعد",
+    "yes": "نعم",
+    "no": "لا",
+    "actions": "إجراءات",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "logout": "تسجيل الخروج"
+  },
+  "header": {
+    "seller": "الكاشير",
+    "admin": "الإدارة"
+  },
+  "pin": {
+    "title": "أدخل الرقم السري",
+    "subtitle": "أدخل رقم البن المكون من 4 أرقام للدخول إلى شاشة البيع",
+    "submit": "دخول",
+    "wrong": "الرقم غير صحيح، حاول مرة أخرى"
+  },
+  "seller": {
+    "openTabs": "الحسابات المفتوحة",
+    "newTab": "حساب جديد",
+    "quickCheckout": "بيع سريع",
+    "searchPlaceholder": "ابحث بالاسم أو رقم الحساب",
+    "tabNumber": "رقم",
+    "balance": "الرصيد",
+    "noTabs": "لا توجد حسابات مفتوحة حالياً",
+    "customerName": "اسم العميل",
+    "createTab": "إنشاء الحساب",
+    "namePlaceholder": "اكتب اسم العميل بالعربي"
+  },
+  "tab": {
+    "details": "تفاصيل الحساب",
+    "items": "الأصناف",
+    "addItem": "إضافة صنف",
+    "total": "الإجمالي",
+    "paid": "المدفوع",
+    "balance": "المتبقي",
+    "addPayment": "إضافة دفعة",
+    "paymentAmount": "المبلغ",
+    "closeTab": "إغلاق الحساب",
+    "confirmCloseTitle": "تأكيد إغلاق الحساب",
+    "confirmCloseWithBalance": "لا يزال هناك رصيد متبقي {amount}. هل تريد الإغلاق بالفعل؟",
+    "closed": "مغلق",
+    "open": "مفتوح",
+    "pickProduct": "اختر صنف",
+    "qty": "الكمية",
+    "noItems": "لم تتم إضافة أصناف بعد",
+    "tabClosed": "تم إغلاق الحساب",
+    "paymentAdded": "تمت إضافة الدفعة",
+    "itemAdded": "تمت إضافة الصنف"
+  },
+  "quickCheckout": {
+    "title": "بيع سريع",
+    "cart": "السلة",
+    "addToCart": "أضف للسلة",
+    "total": "الإجمالي",
+    "confirm": "تأكيد البيع",
+    "emptyCart": "السلة فارغة",
+    "success": "تم البيع بنجاح",
+    "newSale": "بيع جديد",
+    "receipt": "إيصال"
+  },
+  "products": {
+    "title": "المنتجات",
+    "addProduct": "إضافة منتج",
+    "editProduct": "تعديل المنتج",
+    "nameAr": "الاسم بالعربي",
+    "nameEn": "الاسم بالإنجليزي",
+    "price": "السعر",
+    "quantity": "الكمية المتاحة",
+    "category": "الفئة",
+    "image": "الصورة",
+    "uploadImage": "رفع صورة",
+    "active": "نشط",
+    "saved": "تم الحفظ",
+    "deleted": "تم الحذف",
+    "confirmDelete": "هل تريد حذف هذا المنتج؟",
+    "noProducts": "لا توجد منتجات بعد"
+  },
+  "analytics": {
+    "title": "التقارير",
+    "revenueOverTime": "الإيرادات اليومية",
+    "topProducts": "أفضل المنتجات",
+    "openLiability": "إجمالي الحسابات المفتوحة",
+    "salesBreakdown": "توزيع المبيعات",
+    "tabs": "حسابات",
+    "quickSales": "بيع سريع",
+    "byRevenue": "حسب الإيراد",
+    "byQty": "حسب الكمية",
+    "last14Days": "آخر 14 يوم"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "usageThreshold": "حد استخدام البيانات (بايت)",
+    "lowStockThreshold": "حد المخزون المنخفض",
+    "saved": "تم حفظ الإعدادات"
+  },
+  "backup": {
+    "title": "النسخ الاحتياطي وإعادة الضبط",
+    "usageWarning": "تنبيه: الاستخدام التقديري تجاوز الحد المسموح. هذا رقم تقريبي وليس رقم Supabase الحقيقي.",
+    "usedEstimate": "الاستخدام التقديري",
+    "exportJson": "تصدير JSON",
+    "exportCsv": "تصدير CSV",
+    "resetTitle": "إعادة ضبط البيانات",
+    "resetWarning": "سيتم حذف كل الحسابات والدفعات والمبيعات السريعة نهائياً. المنتجات لن تتأثر. لا يمكن التراجع عن هذا الإجراء.",
+    "resetTypeConfirm": "اكتب RESET للتأكيد",
+    "resetButton": "تنفيذ إعادة الضبط",
+    "resetDone": "تمت إعادة الضبط بنجاح",
+    "exportFirst": "ننصح بعمل تصدير أولاً"
+  },
+  "admin": {
+    "login": "تسجيل دخول الإدارة",
+    "password": "كلمة المرور",
+    "loginButton": "دخول",
+    "wrongPassword": "كلمة المرور غير صحيحة",
+    "nav": {
+      "products": "المنتجات",
+      "analytics": "التقارير",
+      "settings": "الإعدادات",
+      "backup": "النسخ الاحتياطي"
+    }
+  }
+}

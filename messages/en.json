@@ -1,0 +1,141 @@
+{
+  "app": {
+    "title": "St.Mark Borg El Arab Cantine"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "confirm": "Confirm",
+    "search": "Search",
+    "back": "Back",
+    "egp": "EGP",
+    "empty": "Nothing here yet",
+    "yes": "Yes",
+    "no": "No",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "logout": "Log out"
+  },
+  "header": {
+    "seller": "Till",
+    "admin": "Admin"
+  },
+  "pin": {
+    "title": "Enter PIN",
+    "subtitle": "Enter the 4-digit PIN to open the till",
+    "submit": "Enter",
+    "wrong": "Wrong PIN, try again"
+  },
+  "seller": {
+    "openTabs": "Open Tabs",
+    "newTab": "New Tab",
+    "quickCheckout": "Quick Checkout",
+    "searchPlaceholder": "Search by name or tab number",
+    "tabNumber": "No.",
+    "balance": "Balance",
+    "noTabs": "No open tabs right now",
+    "customerName": "Customer name",
+    "createTab": "Create Tab",
+    "namePlaceholder": "Type the customer's name in Arabic"
+  },
+  "tab": {
+    "details": "Tab Details",
+    "items": "Items",
+    "addItem": "Add Item",
+    "total": "Total",
+    "paid": "Paid",
+    "balance": "Balance",
+    "addPayment": "Add Payment",
+    "paymentAmount": "Amount",
+    "closeTab": "Close Tab",
+    "confirmCloseTitle": "Confirm Close Tab",
+    "confirmCloseWithBalance": "There is still a balance of {amount}. Close anyway?",
+    "closed": "Closed",
+    "open": "Open",
+    "pickProduct": "Pick a product",
+    "qty": "Qty",
+    "noItems": "No items added yet",
+    "tabClosed": "Tab closed",
+    "paymentAdded": "Payment added",
+    "itemAdded": "Item added"
+  },
+  "quickCheckout": {
+    "title": "Quick Checkout",
+    "cart": "Cart",
+    "addToCart": "Add to cart",
+    "total": "Total",
+    "confirm": "Confirm Sale",
+    "emptyCart": "Cart is empty",
+    "success": "Sale completed",
+    "newSale": "New Sale",
+    "receipt": "Receipt"
+  },
+  "products": {
+    "title": "Products",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "price": "Price",
+    "quantity": "Quantity on hand",
+    "category": "Category",
+    "image": "Image",
+    "uploadImage": "Upload image",
+    "active": "Active",
+    "saved": "Saved",
+    "deleted": "Deleted",
+    "confirmDelete": "Delete this product?",
+    "noProducts": "No products yet"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "revenueOverTime": "Daily Revenue",
+    "topProducts": "Top Products",
+    "openLiability": "Open Tab Liability",
+    "salesBreakdown": "Sales Breakdown",
+    "tabs": "Tabs",
+    "quickSales": "Quick Checkout",
+    "byRevenue": "By Revenue",
+    "byQty": "By Quantity",
+    "last14Days": "Last 14 days"
+  },
+  "settings": {
+    "title": "Settings",
+    "usageThreshold": "Usage warning threshold (bytes)",
+    "lowStockThreshold": "Low stock threshold",
+    "saved": "Settings saved"
+  },
+  "backup": {
+    "title": "Backup & Reset",
+    "usageWarning": "Warning: estimated usage is over the threshold. This is an estimate, not the real Supabase number.",
+    "usedEstimate": "Estimated usage",
+    "exportJson": "Export JSON",
+    "exportCsv": "Export CSV",
+    "resetTitle": "Reset Data",
+    "resetWarning": "This permanently deletes all tabs, payments and quick sales. Products are kept. This cannot be undone.",
+    "resetTypeConfirm": "Type RESET to confirm",
+    "resetButton": "Run Reset",
+    "resetDone": "Reset completed",
+    "exportFirst": "We recommend exporting a backup first"
+  },
+  "admin": {
+    "login": "Admin Login",
+    "password": "Password",
+    "loginButton": "Log in",
+    "wrongPassword": "Wrong password",
+    "nav": {
+      "products": "Products",
+      "analytics": "Analytics",
+      "settings": "Settings",
+      "backup": "Backup"
+    }
+  }
+}
