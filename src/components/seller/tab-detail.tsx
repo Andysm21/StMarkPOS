@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import Link from "next/link";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Trash2, ImageOff } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,16 +43,29 @@ export function TabDetail({
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [busy, setBusy] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [pickQty, setPickQty] = useState(1);
 
   const totalCharged = items.reduce((s, i) => s + i.price_snapshot * i.qty, 0);
   const totalPaid = payments.reduce((s, p) => s + p.amount, 0);
   const balance = totalCharged - totalPaid;
   const closed = tab.status === "closed";
 
-  async function handleAddItem(product: Product) {
+  function openPicker() {
+    setSelectedProduct(null);
+    setPickQty(1);
+    setPickerOpen(true);
+  }
+
+  function pickProduct(product: Product) {
+    setSelectedProduct(product);
+    setPickQty(1);
+  }
+
+  async function handleAddItem(product: Product, qty: number) {
     setBusy(true);
     try {
-      await addTabItem(tab.id, product, 1);
+      await addTabItem(tab.id, product, qty);
       setItems((prev) => [
         ...prev,
         {
@@ -61,7 +74,7 @@ export function TabDetail({
           product_id: product.id,
           name_snapshot: product.name_ar,
           price_snapshot: product.price,
-          qty: 1,
+          qty,
           created_at: new Date().toISOString(),
         },
       ]);
@@ -71,6 +84,7 @@ export function TabDetail({
     } finally {
       setBusy(false);
       setPickerOpen(false);
+      setSelectedProduct(null);
     }
   }
 
@@ -165,7 +179,7 @@ export function TabDetail({
 
       {!closed && (
         <div className="flex gap-2">
-          <Button className="h-11 flex-1" onClick={() => setPickerOpen(true)} disabled={busy}>
+          <Button className="h-11 flex-1" onClick={openPicker} disabled={busy}>
             <Plus className="h-4 w-4" />
             {t("addItem")}
           </Button>
@@ -225,28 +239,117 @@ export function TabDetail({
         </Button>
       )}
 
-      <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
+      <Dialog
+        open={pickerOpen}
+        onOpenChange={(open) => {
+          setPickerOpen(open);
+          if (!open) setSelectedProduct(null);
+        }}
+      >
         <DialogContent className="max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{t("pickProduct")}</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {products.map((p) => (
-              <button
-                key={p.id}
-                disabled={busy}
-                onClick={() => handleAddItem(p)}
-                className="flex flex-col items-center gap-1 rounded-xl border p-3 text-center transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
-              >
-                <span dir="rtl" className="text-sm font-medium">
-                  {p.name_ar}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {formatCurrency(p.price, locale)}
-                </span>
-              </button>
-            ))}
-          </div>
+          {selectedProduct ? (
+            <>
+              <DialogHeader>
+                <DialogTitle dir="rtl">{selectedProduct.name_ar}</DialogTitle>
+              </DialogHeader>
+              <div className="flex flex-col items-center gap-4 py-2">
+                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-xl bg-secondary">
+                  {selectedProduct.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={selectedProduct.image_url}
+                      alt={selectedProduct.name_ar}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <ImageOff className="h-8 w-8 text-muted-foreground" />
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {formatCurrency(selectedProduct.price, locale)} {t("each")}
+                </p>
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-11 w-11"
+                    onClick={() => setPickQty((q) => Math.max(1, q - 1))}
+                    disabled={busy}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="w-10 text-center text-xl font-bold">{pickQty}</span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-11 w-11"
+                    onClick={() => setPickQty((q) => q + 1)}
+                    disabled={busy}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-sm font-semibold text-primary">
+                  {formatCurrency(selectedProduct.price * pickQty, locale)}
+                </p>
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setSelectedProduct(null)}
+                  disabled={busy}
+                >
+                  {tc("back")}
+                </Button>
+                <Button
+                  onClick={() => handleAddItem(selectedProduct, pickQty)}
+                  disabled={busy}
+                >
+                  {t("addItem")}
+                </Button>
+              </DialogFooter>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle>{t("pickProduct")}</DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {products.map((p) => (
+                  <button
+                    key={p.id}
+                    disabled={busy}
+                    onClick={() => pickProduct(p)}
+                    className="flex flex-col items-center gap-1.5 overflow-hidden rounded-xl border text-center transition-colors hover:bg-secondary active:scale-95 disabled:opacity-50"
+                  >
+                    <div className="flex h-20 w-full items-center justify-center bg-secondary">
+                      {p.image_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={p.image_url}
+                          alt={p.name_ar}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <ImageOff className="h-6 w-6 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-0.5 px-2 pb-2">
+                      <span dir="rtl" className="text-sm font-medium">
+                        {p.name_ar}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatCurrency(p.price, locale)}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
 
