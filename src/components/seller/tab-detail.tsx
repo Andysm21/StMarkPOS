@@ -16,6 +16,7 @@ import {
   TrendingDown,
   CheckCircle2,
   ShoppingBasket,
+  ArrowRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -53,7 +54,6 @@ export function TabDetail({
 
   const [items, setItems] = useState(initialItems);
   const [payments, setPayments] = useState(initialPayments);
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [busy, setBusy] = useState(false);
@@ -76,12 +76,6 @@ export function TabDetail({
       return () => clearTimeout(timer);
     }
   }, [balance]);
-
-  function openPicker() {
-    setSelectedProduct(null);
-    setPickQty(1);
-    setPickerOpen(true);
-  }
 
   function pickProduct(product: Product) {
     setSelectedProduct(product);
@@ -109,7 +103,6 @@ export function TabDetail({
       toast.error(tc("error"));
     } finally {
       setBusy(false);
-      setPickerOpen(false);
       setSelectedProduct(null);
     }
   }
@@ -235,21 +228,99 @@ export function TabDetail({
       </Card>
 
       {!closed && (
-        <div className="flex gap-2">
-          <Button className="h-11 flex-1" onClick={openPicker} disabled={busy}>
-            <Plus className="h-4 w-4" />
-            {t("addItem")}
-          </Button>
-          <Button
-            variant="success"
-            className="h-11 flex-1"
-            onClick={() => setPaymentOpen(true)}
-            disabled={busy}
-          >
-            <Wallet className="h-4 w-4" />
-            {t("addPayment")}
-          </Button>
-        </div>
+        <Button
+          variant="success"
+          className="h-11 w-full"
+          onClick={() => setPaymentOpen(true)}
+          disabled={busy}
+        >
+          <Wallet className="h-4 w-4" />
+          {t("addPayment")}
+        </Button>
+      )}
+
+      {!closed && (
+        <Card className="border-primary/10">
+          <CardContent className="flex flex-col gap-3 py-4">
+            <h2 className="flex items-center gap-2 text-sm font-semibold">
+              <Plus className="h-4 w-4 text-primary" />
+              {t("addItem")}
+            </h2>
+            {selectedProduct ? (
+              <div className="flex flex-col items-center gap-4 py-2">
+                <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl bg-secondary">
+                  {selectedProduct.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={selectedProduct.image_url}
+                      alt={selectedProduct.name_ar}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <ImageOff className="h-8 w-8 text-muted-foreground" />
+                  )}
+                </div>
+                <p dir="rtl" className="text-base font-semibold">
+                  {selectedProduct.name_ar}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {formatCurrency(selectedProduct.price, locale)} {t("each")}
+                </p>
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-11 w-11"
+                    onClick={() => setPickQty((q) => Math.max(1, q - 1))}
+                    disabled={busy}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="w-10 text-center text-xl font-bold">{pickQty}</span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-11 w-11"
+                    onClick={() => setPickQty((q) => q + 1)}
+                    disabled={busy}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-sm font-semibold text-primary">
+                  {formatCurrency(selectedProduct.price * pickQty, locale)}
+                </p>
+                <div className="flex w-full gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="press flex-1"
+                    onClick={() => setSelectedProduct(null)}
+                    disabled={busy}
+                  >
+                    {locale === "ar" ? (
+                      <ArrowRight className="h-4 w-4" />
+                    ) : (
+                      <ArrowLeft className="h-4 w-4" />
+                    )}
+                    {tc("back")}
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={() => handleAddItem(selectedProduct, pickQty)}
+                    disabled={busy}
+                  >
+                    {t("addItem")}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <CategoryProductPicker products={products} onSelect={pickProduct} disabled={busy} />
+            )}
+          </CardContent>
+        </Card>
       )}
 
       <div>
@@ -367,90 +438,6 @@ export function TabDetail({
               {t("confirmCloseAction")}
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
-        open={pickerOpen}
-        onOpenChange={(open) => {
-          setPickerOpen(open);
-          if (!open) setSelectedProduct(null);
-        }}
-      >
-        <DialogContent className="max-h-[80vh] overflow-y-auto">
-          {selectedProduct ? (
-            <>
-              <DialogHeader>
-                <DialogTitle dir="rtl">{selectedProduct.name_ar}</DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col items-center gap-4 py-2">
-                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-xl bg-secondary">
-                  {selectedProduct.image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={selectedProduct.image_url}
-                      alt={selectedProduct.name_ar}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <ImageOff className="h-8 w-8 text-muted-foreground" />
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {formatCurrency(selectedProduct.price, locale)} {t("each")}
-                </p>
-                <div className="flex items-center gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-11 w-11"
-                    onClick={() => setPickQty((q) => Math.max(1, q - 1))}
-                    disabled={busy}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="w-10 text-center text-xl font-bold">{pickQty}</span>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-11 w-11"
-                    onClick={() => setPickQty((q) => q + 1)}
-                    disabled={busy}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-sm font-semibold text-primary">
-                  {formatCurrency(selectedProduct.price * pickQty, locale)}
-                </p>
-              </div>
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setSelectedProduct(null)}
-                  disabled={busy}
-                >
-                  {tc("back")}
-                </Button>
-                <Button
-                  onClick={() => handleAddItem(selectedProduct, pickQty)}
-                  disabled={busy}
-                >
-                  {t("addItem")}
-                </Button>
-              </DialogFooter>
-            </>
-          ) : (
-            <>
-              <DialogHeader>
-                <DialogTitle>{t("pickProduct")}</DialogTitle>
-              </DialogHeader>
-              <CategoryProductPicker products={products} onSelect={pickProduct} disabled={busy} />
-            </>
-          )}
         </DialogContent>
       </Dialog>
 

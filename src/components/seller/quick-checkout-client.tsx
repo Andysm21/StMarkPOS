@@ -4,7 +4,16 @@ import { useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import Link from "next/link";
 import { toast } from "sonner";
-import { ArrowLeft, Minus, Plus, CheckCircle2, ImageOff, ShoppingCart, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Minus,
+  Plus,
+  CheckCircle2,
+  ImageOff,
+  ShoppingCart,
+  Trash2,
+} from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,13 +23,6 @@ import {
   SheetTitle,
   SheetFooter,
 } from "@/components/ui/sheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatCurrency } from "@/lib/format";
 import type { Product } from "@/lib/types";
@@ -140,6 +142,71 @@ export function QuickCheckoutClient({ products }: { products: Product[] }) {
 
       {products.length === 0 ? (
         <EmptyState icon={ShoppingCart} title={t("emptyCart")} />
+      ) : pickedProduct ? (
+        <Card className="border-primary/10">
+          <CardContent className="flex flex-col items-center gap-4 py-4">
+            <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl bg-secondary">
+              {pickedProduct.image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={pickedProduct.image_url}
+                  alt={pickedProduct.name_ar}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <ImageOff className="h-8 w-8 text-muted-foreground" />
+              )}
+            </div>
+            <p dir="rtl" className="text-base font-semibold">
+              {pickedProduct.name_ar}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {formatCurrency(pickedProduct.price, locale)} {tTab("each")}
+            </p>
+            <div className="flex items-center gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-11 w-11"
+                onClick={() => setPickQty((q) => Math.max(1, q - 1))}
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="w-10 text-center text-xl font-bold">{pickQty}</span>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-11 w-11"
+                onClick={() => setPickQty((q) => q + 1)}
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+            <p className="text-sm font-semibold text-primary">
+              {formatCurrency(pickedProduct.price * pickQty, locale)}
+            </p>
+            <div className="flex w-full gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="press flex-1"
+                onClick={() => setPickedProduct(null)}
+              >
+                {locale === "ar" ? (
+                  <ArrowRight className="h-4 w-4" />
+                ) : (
+                  <ArrowLeft className="h-4 w-4" />
+                )}
+                {tc("back")}
+              </Button>
+              <Button className="flex-1" onClick={confirmPick}>
+                {t("addToCart")}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <CategoryProductPicker products={products} onSelect={addFromPicker} disabled={submitting} />
       )}
@@ -250,65 +317,6 @@ export function QuickCheckoutClient({ products }: { products: Product[] }) {
         </SheetContent>
       </Sheet>
 
-      {/* Qty-stepper confirm, mirrors tab item picker */}
-      <Dialog open={!!pickedProduct} onOpenChange={(open) => !open && setPickedProduct(null)}>
-        <DialogContent>
-          {pickedProduct && (
-            <>
-              <DialogHeader>
-                <DialogTitle dir="rtl">{pickedProduct.name_ar}</DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col items-center gap-4 py-2">
-                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-xl bg-secondary">
-                  {pickedProduct.image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={pickedProduct.image_url}
-                      alt={pickedProduct.name_ar}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <ImageOff className="h-8 w-8 text-muted-foreground" />
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {formatCurrency(pickedProduct.price, locale)} {tTab("each")}
-                </p>
-                <div className="flex items-center gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-11 w-11"
-                    onClick={() => setPickQty((q) => Math.max(1, q - 1))}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="w-10 text-center text-xl font-bold">{pickQty}</span>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-11 w-11"
-                    onClick={() => setPickQty((q) => q + 1)}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-sm font-semibold text-primary">
-                  {formatCurrency(pickedProduct.price * pickQty, locale)}
-                </p>
-              </div>
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setPickedProduct(null)}>
-                  {tc("back")}
-                </Button>
-                <Button onClick={confirmPick}>{t("addToCart")}</Button>
-              </DialogFooter>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
