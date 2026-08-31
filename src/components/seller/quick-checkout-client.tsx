@@ -145,7 +145,7 @@ export function QuickCheckoutClient({ products }: { products: Product[] }) {
       ) : pickedProduct ? (
         <Card className="border-primary/10">
           <CardContent className="flex flex-col items-center gap-4 py-4">
-            <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl bg-secondary">
+            <div className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-2xl bg-secondary shadow-sm">
               {pickedProduct.image_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -157,7 +157,7 @@ export function QuickCheckoutClient({ products }: { products: Product[] }) {
                 <ImageOff className="h-8 w-8 text-muted-foreground" />
               )}
             </div>
-            <p dir="rtl" className="text-base font-semibold">
+            <p dir="rtl" className="text-xl font-bold">
               {pickedProduct.name_ar}
             </p>
             <p className="text-sm text-muted-foreground">
@@ -168,7 +168,7 @@ export function QuickCheckoutClient({ products }: { products: Product[] }) {
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-11 w-11"
+                className="h-12 w-12"
                 onClick={() => setPickQty((q) => Math.max(1, q - 1))}
               >
                 <Minus className="h-4 w-4" />
@@ -178,7 +178,7 @@ export function QuickCheckoutClient({ products }: { products: Product[] }) {
                 type="button"
                 variant="outline"
                 size="icon"
-                className="h-11 w-11"
+                className="h-12 w-12"
                 onClick={() => setPickQty((q) => q + 1)}
               >
                 <Plus className="h-4 w-4" />

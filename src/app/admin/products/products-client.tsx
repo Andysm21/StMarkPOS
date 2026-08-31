@@ -92,30 +92,30 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
       {products.length === 0 ? (
         <EmptyState icon={PackageSearch} title={t("noProducts")} />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p, i) => (
             <Card
               key={p.id}
-              className="lift stagger-item overflow-hidden border-primary/10"
+              className="lift stagger-item overflow-hidden border-primary/10 shadow-sm"
               style={{ animationDelay: `${Math.min(i, 12) * 30}ms` }}
             >
-              <div className="flex h-32 items-center justify-center bg-gradient-to-br from-muted to-secondary">
+              <div className="flex h-44 items-center justify-center bg-gradient-to-br from-muted to-secondary">
                 {p.image_url ? (
                   <Image
                     src={p.image_url}
                     alt={p.name_ar}
-                    width={200}
-                    height={128}
-                    className="h-32 w-full object-cover"
+                    width={300}
+                    height={176}
+                    className="h-44 w-full object-cover"
                   />
                 ) : (
-                  <ImageOff className="h-8 w-8 text-muted-foreground" />
+                  <ImageOff className="h-10 w-10 text-muted-foreground" />
                 )}
               </div>
-              <CardContent className="flex flex-col gap-2 pt-4">
+              <CardContent className="flex flex-col gap-3 pt-5">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-semibold" dir="rtl">
+                    <p className="text-lg font-bold" dir="rtl">
                       {p.name_ar}
                     </p>
                     {p.name_en && (
@@ -126,8 +126,10 @@ export function ProductsClient({ initialProducts }: { initialProducts: Product[]
                     {p.active ? tc("active") : tc("inactive")}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-semibold text-primary">{formatCurrency(p.price, locale)}</span>
+                <div className="flex items-center justify-between text-base">
+                  <span className="text-lg font-bold text-primary">
+                    {formatCurrency(p.price, locale)}
+                  </span>
                   <span className="text-muted-foreground">
                     {t("quantity")}: {p.quantity_on_hand}
                   </span>

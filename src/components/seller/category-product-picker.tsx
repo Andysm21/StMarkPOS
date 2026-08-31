@@ -73,7 +73,7 @@ export function CategoryProductPicker({
       </div>
 
       {!searching && !category && (
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {categoriesWithProducts.map((c, i) => (
             <button
               key={c}
@@ -81,10 +81,10 @@ export function CategoryProductPicker({
               disabled={disabled}
               onClick={() => setCategory(c)}
               style={{ animationDelay: `${Math.min(i, 12) * 25}ms` }}
-              className="lift stagger-item flex flex-col items-center gap-1.5 rounded-xl border border-primary/10 bg-gradient-to-br from-secondary to-muted p-3 text-center disabled:opacity-50"
+              className="lift stagger-item flex flex-col items-center justify-center gap-2 rounded-2xl border border-primary/10 bg-gradient-to-br from-secondary to-muted p-6 text-center shadow-sm disabled:opacity-50"
             >
-              <span className="text-2xl">{CATEGORY_EMOJI[c] ?? "🧺"}</span>
-              <span className="text-xs font-medium">{tCat(c)}</span>
+              <span className="text-5xl">{CATEGORY_EMOJI[c] ?? "🧺"}</span>
+              <span className="text-base font-semibold">{tCat(c)}</span>
             </button>
           ))}
           {categoriesWithProducts.length === 0 && (
@@ -115,9 +115,9 @@ export function CategoryProductPicker({
               disabled={disabled}
               onClick={() => onSelect(p)}
               style={{ animationDelay: `${Math.min(i, 12) * 25}ms` }}
-              className="lift stagger-item flex flex-col items-center gap-1.5 overflow-hidden rounded-xl border border-primary/10 bg-card text-center disabled:opacity-50"
+              className="lift stagger-item flex flex-col items-center gap-2 overflow-hidden rounded-2xl border border-primary/10 bg-card text-center shadow-sm disabled:opacity-50"
             >
-              <div className="flex h-20 w-full items-center justify-center bg-gradient-to-br from-secondary to-muted">
+              <div className="flex h-32 w-full items-center justify-center bg-gradient-to-br from-secondary to-muted sm:h-36">
                 {p.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -126,14 +126,14 @@ export function CategoryProductPicker({
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <ImageOff className="h-6 w-6 text-muted-foreground" />
+                  <ImageOff className="h-10 w-10 text-muted-foreground" />
                 )}
               </div>
-              <div className="flex flex-col gap-0.5 px-2 pb-2">
-                <span dir="rtl" className="text-sm font-medium">
+              <div className="flex flex-col gap-1 px-3 pb-3">
+                <span dir="rtl" className="text-base font-semibold">
                   {p.name_ar}
                 </span>
-                <span className="text-xs font-semibold text-primary">
+                <span className="text-sm font-bold text-primary">
                   {formatCurrency(p.price, locale)}
                 </span>
               </div>

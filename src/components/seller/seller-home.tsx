@@ -87,32 +87,34 @@ export function SellerHome({ initialTabs }: { initialTabs: Tab[] }) {
           description={t("newTab")}
         />
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((tab, i) => {
             const balance = tab.total_charged - tab.total_paid;
             return (
               <Link key={tab.id} href={`/tabs/${tab.id}`} className="block">
                 <Card
-                  className="lift stagger-item h-full border-primary/10"
+                  className="lift stagger-item h-full border-primary/10 shadow-sm"
                   style={{ animationDelay: `${Math.min(i, 10) * 40}ms` }}
                 >
-                  <CardContent className="flex flex-col gap-2 py-4">
+                  <CardContent className="flex flex-col gap-3 py-5">
                     <div className="flex items-center justify-between">
-                      <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold">
+                      <span className="rounded-full bg-secondary px-3 py-1 text-sm font-semibold">
                         {t("tabNumber")} {tab.tab_number}
                       </span>
                       {balance > 0 && (
-                        <span className="h-2 w-2 rounded-full bg-destructive" />
+                        <span className="h-2.5 w-2.5 rounded-full bg-destructive" />
                       )}
                     </div>
-                    <p className="truncate text-lg font-semibold" dir="rtl">
+                    <p className="truncate text-2xl font-bold" dir="rtl">
                       {tab.customer_name_ar}
                     </p>
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-base">
                       <span className="text-muted-foreground">{t("balance")}</span>
                       <span
                         className={
-                          balance > 0 ? "font-bold text-destructive" : "font-bold text-success"
+                          balance > 0
+                            ? "text-lg font-bold text-destructive"
+                            : "text-lg font-bold text-success"
                         }
                       >
                         {formatCurrency(balance, locale)}
